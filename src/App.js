@@ -10,7 +10,7 @@ const meteoriteDataUrl = "https://raw.githubusercontent.com/freeCodeCamp/Project
 function App() {
 
   const [meteoriteData, setMeteoriteData] = useState([]);
-  const [coordinate, setCoordinates] = useState([]);
+  const [geometry, setGeometry] = useState([]);
 
   useEffect(() => {
     // Fetch meteorite strike data
@@ -18,9 +18,14 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         setMeteoriteData(data.features)
+       
+        const extractedGeometries = data.features.map(feature => feature.geometry);
+        setGeometry(extractedGeometries);
+        
       });
   }, [meteoriteData]);
-console.log(meteoriteData.map(features => features.geometry))
+
+  console.log(geometry.map(geo => geo.type))
 
   return (
     <div className="App">
@@ -35,10 +40,10 @@ console.log(meteoriteData.map(features => features.geometry))
         }
       </Geographies>
      
-            {meteoriteData.map((meteorite) => {
-              const [longitude, latitude] = meteorite.geometry.coordinates;
+            {geometry.map((meteorite) => {
+              const [longitude, latitude] = meteorite.coordinates;
               return (
-                <Marker key={meteorite.properties.id} coordinates={[longitude, latitude]}>
+                <Marker  coordinates={[longitude, latitude]}>
                   <circle r={4} fill="#F00" />
                 </Marker>
               );
